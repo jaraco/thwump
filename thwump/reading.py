@@ -21,3 +21,13 @@ class IndexReader(whoosh.reading.IndexReader):
 		fields = 'fieldname', 'text', 'docfreq', 'indexfreq'
 		cur = self.index.collection.find(fields=fields).sort('fieldname')
 		return (tuple(rec[field] for field in fields) for rec in cur)
+
+	def iter_from(self, fieldname, text):
+		"""
+		Yields (field_num, text, doc_freq, index_freq) tuples for all terms in
+		the reader, starting at the given term.
+		"""
+		fields = 'fieldname', 'text', 'docfreq', 'indexfreq'
+		cur = self.index.collection.find(fields=fields).sort('fieldname')
+		return (tuple(rec[field] for field in fields) for rec in cur
+			if rec['fieldname'] >= fieldname)
