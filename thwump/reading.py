@@ -31,3 +31,47 @@ class IndexReader(whoosh.reading.IndexReader):
 		cur = self.index.collection.find(fields=fields).sort('fieldname')
 		return (tuple(rec[field] for field in fields) for rec in cur
 			if rec['fieldname'] >= fieldname)
+
+	def stored_fields(self, docnum):
+		"""
+		Returns the stored fields for the given document number.
+		"""
+		return self.index.collection.get(docnum).keys()
+
+	def doc_count_all(self):
+		"""
+		Returns the total number of documents, DELETED OR UNDELETED, in this
+		reader.
+		"""
+		return self.index.collection.get('')
+
+	def doc_count(self):
+		"""
+		Returns the total number of UNDELETED documents in this reader.
+		"""
+		return self.index.collection.get('')
+
+	def doc_field_length(self, docnum, fieldname, default=0):
+		"""
+		Returns the number of terms in the given field in the given document.
+		This is used by some scoring algorithms.
+		"""
+		doc = self.index.collection.get(docnum, fields=[fieldname])
+		field = doc['field']
+		return len(field)
+
+	def doc_frequency(self, fieldname, text):
+		"""
+		Returns how many documents the given term appears in.
+		"""
+		query = {fieldname: text}
+		return self.index.collection.find(query).count()
+
+	def field_length(self, fieldname):
+		"""
+		Returns the total number of terms in the given field. This is used by
+		some scoring algorithms.
+		"""
+		# todo: is this right?
+		query = {fieldname: {'$exists': 1}}
+		return self.index.collection.find(query).count()
