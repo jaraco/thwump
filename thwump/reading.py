@@ -43,13 +43,13 @@ class IndexReader(whoosh.reading.IndexReader):
 		Returns the total number of documents, DELETED OR UNDELETED, in this
 		reader.
 		"""
-		return self.index.collection.get('')
+		return self.index.collection.count()
 
 	def doc_count(self):
 		"""
 		Returns the total number of UNDELETED documents in this reader.
 		"""
-		return self.index.collection.get('')
+		return self.index.collection.count()
 
 	def doc_field_length(self, docnum, fieldname, default=0):
 		"""
