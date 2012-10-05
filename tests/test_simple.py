@@ -14,7 +14,7 @@ def test_quick_example():
 		path=fields.ID(stored=True),
 		context=fields.TEXT,
 	)
-	ix = Index()
+	ix = Index(schema=schema)
 	writer = ix.writer()
 	writer.add_document(title="First Document", path="/a",
 		content="This is the first document we've added!",
