@@ -14,9 +14,6 @@ class Index(whoosh.index.Index):
 	def is_empty(self):
 		return not self.doc_count()
 
-	def doc_count(self):
-		return self.collection.count()
-
 	def reader(self, reuse=None):
 		return reuse or reading.IndexReader(self)
 
