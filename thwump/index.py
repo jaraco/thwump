@@ -17,6 +17,8 @@ class Index(whoosh.index.Index):
 		return not self.doc_count()
 
 	def reader(self, reuse=None):
+		if reuse:
+			reuse.index = self
 		return reuse or reading.IndexReader(self)
 
 	def writer(self, **kwargs):

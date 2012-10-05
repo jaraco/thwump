@@ -4,6 +4,10 @@ class IndexReader(whoosh.reading.IndexReader):
 	def __init__(self, index):
 		self.index = index
 
+	@property
+	def schema(self):
+		return self.index.schema
+
 	def __contains__(self, term):
 		"""
 		Returns True if the given term tuple (fieldname, text) is

@@ -4,6 +4,10 @@ class IndexWriter(whoosh.writing.IndexWriter):
 	def __init__(self, index):
 		self.index = index
 
+	@property
+	def schema(self):
+		return self.index.schema
+
 	def add_document(self, **fields):
 		self.index.collection.insert(fields)
 
