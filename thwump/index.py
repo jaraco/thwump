@@ -6,12 +6,13 @@ from . import writing
 
 class Index(whoosh.index.Index):
 	database_name = 'thwump'
-	collection_name = 'index'
-	def __init__(self, schema=None, connection_factory=pymongo.Connection):
+
+	def __init__(self, name='index', schema=None,
+			connection_factory=pymongo.Connection):
+		self.name = name
 		self.schema = schema
 		self.connection = connection_factory()
-		self.collection = self.connection[self.database_name][
-			self.collection_name]
+		self.collection = self.connection[self.database_name][name]
 
 	def is_empty(self):
 		return not self.doc_count()

@@ -1,3 +1,4 @@
+import bson
 import whoosh.writing
 
 class IndexWriter(whoosh.writing.IndexWriter):
@@ -9,7 +10,45 @@ class IndexWriter(whoosh.writing.IndexWriter):
 		return self.index.schema
 
 	def add_document(self, **fields):
-		self.index.collection.insert(fields)
+		field_names = sorted(name for name in fields.keys()
+			if not name.startswith('_') and fields[name] is not None)
+		doc_id = bson.objectid.ObjectId()
+		doc = dict(
+			_id = doc_id,
+		)
+		for field_name in field_names:
+			value = fields[field_name]
+			field = self.schema[field_name]
+
+			if field.indexed:
+				# Get the index details for the field
+				details = field.index(value)
+				if field.scoreable:
+					doc[field_name] = dict(
+						length = sum(freq for tbytes, freq, weight, vbytes
+							in details),
+						)
+				# store the details
+				for text, freq, weight, vector in details:
+					self.index.collection.posts.insert(dict(
+						doc_id = doc_id,
+						field_name=field_name,
+						text = text,
+						weight = weight,
+						vector = vector,
+						), safe=True)
+			if field.separate_spelling():
+				raise NotImplementedError()
+			if field.vector:
+				raise NotImplementedError()
+
+			stored_value = fields.get('_stored_%s' % field_name, value)
+
+			if field.stored:
+				doc_field = doc.setdefault(field_name, {})
+				doc_field['value'] = stored_value
+
+		self.index.collection.insert(doc)
 
 	def add_reader(self, reader):
 		"""
@@ -21,4 +60,8 @@ class IndexWriter(whoosh.writing.IndexWriter):
 			self.index.insert(item)
 
 	def delete_document(self, docnum, delete=True):
-		self.index.collection.remove(docnum)
+		if not delete:
+			raise NotImplementedError()
+		doc_id = next(self.index.collection.find().skip(docnum-1))['_id']
+		self.index.collection.remove(doc_id)
+		self.index.collection.posts.remove({'doc_id': doc_id})

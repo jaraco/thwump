@@ -1,8 +1,14 @@
 from __future__ import print_function, unicode_literals
 
+import pymongo
+
 from whoosh import fields
 from whoosh.qparser import QueryParser
 from thwump.index import Index
+
+def setup_module(mod):
+	# for now, drop previous results when running tests
+	pymongo.Connection().thwump.index.drop()
 
 def test_quick_example():
 	"""
