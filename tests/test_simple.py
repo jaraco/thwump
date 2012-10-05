@@ -9,6 +9,7 @@ from thwump.index import Index
 def setup_module(mod):
 	# for now, drop previous results when running tests
 	pymongo.Connection().thwump.index.drop()
+	pymongo.Connection().thwump.index.posts.drop()
 
 def test_quick_example():
 	"""
@@ -18,7 +19,7 @@ def test_quick_example():
 	schema = fields.Schema(
 		title=fields.TEXT(stored=True),
 		path=fields.ID(stored=True),
-		context=fields.TEXT,
+		content=fields.TEXT,
 	)
 	ix = Index(schema=schema)
 	writer = ix.writer()

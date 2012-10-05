@@ -22,14 +22,12 @@ class IndexWriter(whoosh.writing.IndexWriter):
 
 			if field.indexed:
 				# Get the index details for the field
-				details = field.index(value)
-				if field.scoreable:
-					doc[field_name] = dict(
-						length = sum(freq for tbytes, freq, weight, vbytes
-							in details),
-						)
+				scorable = field.scorable
 				# store the details
-				for text, freq, weight, vector in details:
+				for text, freq, weight, vector in field.index(value):
+					if scorable:
+						doc_field = doc.setdefault(field_name, {})
+						doc_field['length'] = doc_field.get('length', 0) + freq
 					self.index.collection.posts.insert(dict(
 						doc_id = doc_id,
 						field_name=field_name,
