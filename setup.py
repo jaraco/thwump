@@ -3,7 +3,7 @@
 """
 Setup script for building thwump distribution
 
-Copyright © 2011 Jason R. Coombs
+Copyright © 2011-2012 Jason R. Coombs
 """
 
 from setuptools import find_packages
@@ -37,9 +37,11 @@ setup_params = dict(
 	dependency_links = [
 	],
 	tests_require=[
+		'whoosh',
 	],
 	setup_requires=[
-		'hgtools>=1.0b',
+		'hgtools>=1.0',
+		'pytest-runner',
 	],
 	use_2to3=True,
 )

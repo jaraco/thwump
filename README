@@ -10,3 +10,11 @@ Status
 ======
 
 Thwump is still experimental and not functional. Contributions welcome.
+
+Testing
+=======
+
+Tests use `pytest-runner <http://bitbucket.org/jaraco/pytest-runner>`_. To
+run them, simply run::
+
+    python setup.py ptr
